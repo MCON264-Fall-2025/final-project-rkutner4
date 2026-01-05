@@ -1,7 +1,6 @@
-package edu.course.eventplanner;
+package edu.course.eventplanner.service;
 
 import edu.course.eventplanner.model.Task;
-import edu.course.eventplanner.service.TaskManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

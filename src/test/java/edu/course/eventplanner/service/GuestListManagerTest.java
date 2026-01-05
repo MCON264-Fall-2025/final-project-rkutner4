@@ -1,6 +1,5 @@
-package edu.course.eventplanner;
+package edu.course.eventplanner.service;
 import edu.course.eventplanner.model.Guest;
-import edu.course.eventplanner.service.GuestListManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
