@@ -90,7 +90,7 @@ public class SeatingPlannerTest {
     }
 
     @Test
-    void generateSeating_handlesZeroTablesGracefully() {
+    void generateSeating_withZeroTables_stillSeatsGuests() {
         Venue venue = new Venue("No Tables", 100, 10, 0, 5);
         SeatingPlanner planner = new SeatingPlanner(venue);
 
@@ -101,7 +101,8 @@ public class SeatingPlannerTest {
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
 
-        assertTrue(seating.isEmpty());
+        assertFalse(seating.isEmpty());
+        assertEquals(2, seating.get(1).size());
     }
 
     @Test

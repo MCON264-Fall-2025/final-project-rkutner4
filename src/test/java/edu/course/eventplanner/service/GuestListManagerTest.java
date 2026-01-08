@@ -69,14 +69,14 @@ public class GuestListManagerTest {
     }
 
     @Test
-    void addGuest_withSameName_overwritesLookupButKeepsListSize() {
+    void addGuest_withSameName_keepsOriginalGuestAndCount() {
         GuestListManager manager = new GuestListManager();
 
         manager.addGuest(new Guest("Alice", "family"));
         manager.addGuest(new Guest("Alice", "friends"));
 
-        assertEquals(2, manager.getGuestCount());
-        assertEquals("friends", manager.findGuest("Alice").getGroupTag());
+        assertEquals(1, manager.getGuestCount());
+        assertEquals("family", manager.findGuest("Alice").getGroupTag());
     }
 
 }
