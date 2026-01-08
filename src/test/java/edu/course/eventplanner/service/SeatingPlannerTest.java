@@ -88,4 +88,41 @@ public class SeatingPlannerTest {
 
         assertTrue(seating.isEmpty());
     }
+
+    @Test
+    void generateSeating_handlesZeroTablesGracefully() {
+        Venue venue = new Venue("No Tables", 100, 10, 0, 5);
+        SeatingPlanner planner = new SeatingPlanner(venue);
+
+        List<Guest> guests = List.of(
+                new Guest("A", "family"),
+                new Guest("B", "friends")
+        );
+
+        Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
+
+        assertTrue(seating.isEmpty());
+    }
+
+    @Test
+    void generateSeating_handlesMultipleGroupTags() {
+        Venue venue = new Venue("Mixed Groups", 100, 20, 4, 2);
+        SeatingPlanner planner = new SeatingPlanner(venue);
+
+        List<Guest> guests = List.of(
+                new Guest("A", "family"),
+                new Guest("B", "friends"),
+                new Guest("C", "family"),
+                new Guest("D", "friends")
+        );
+
+        Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
+
+        int totalSeated = seating.values().stream()
+                .mapToInt(List::size)
+                .sum();
+
+        assertEquals(4, totalSeated);
+    }
+
 }

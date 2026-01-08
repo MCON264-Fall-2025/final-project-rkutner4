@@ -59,4 +59,24 @@ public class GuestListManagerTest {
         assertFalse(removed);
     }
 
+    @Test
+    void addGuest_doesNothingWhenGuestIsNull() {
+        GuestListManager manager = new GuestListManager();
+
+        manager.addGuest(null);
+
+        assertEquals(0, manager.getGuestCount());
+    }
+
+    @Test
+    void addGuest_withSameName_overwritesLookupButKeepsListSize() {
+        GuestListManager manager = new GuestListManager();
+
+        manager.addGuest(new Guest("Alice", "family"));
+        manager.addGuest(new Guest("Alice", "friends"));
+
+        assertEquals(2, manager.getGuestCount());
+        assertEquals("friends", manager.findGuest("Alice").getGroupTag());
+    }
+
 }

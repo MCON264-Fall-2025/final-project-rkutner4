@@ -65,4 +65,26 @@ public class TaskManagerTest {
 
         assertEquals(1, manager.remainingTaskCount());
     }
+
+    @Test
+    void executeNextTask_returnsNullWhenNoTasksExist() {
+        TaskManager manager = new TaskManager();
+
+        Task task = manager.executeNextTask();
+
+        assertNull(task);
+    }
+
+    @Test
+    void undoAfterExecute_restoresLastTask() {
+        TaskManager manager = new TaskManager();
+        Task task = new Task("Decorate");
+
+        manager.addTask(task);
+        manager.executeNextTask();
+
+        Task undone = manager.undoLastTask();
+
+        assertEquals(task, undone);
+    }
 }
