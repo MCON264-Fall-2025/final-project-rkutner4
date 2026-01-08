@@ -49,4 +49,14 @@ public class GuestListManagerTest {
 
         assertFalse(manager.removeGuest("Nobody"));
     }
+
+    @Test
+    void removeGuest_returnsFalseWhenGuestNotFound() {
+        GuestListManager manager = new GuestListManager();
+
+        boolean removed = manager.removeGuest("Unknown");
+
+        assertFalse(removed);
+    }
+
 }

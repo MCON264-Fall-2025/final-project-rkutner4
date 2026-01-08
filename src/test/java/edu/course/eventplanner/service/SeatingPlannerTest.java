@@ -55,4 +55,37 @@ public class SeatingPlannerTest {
 
         assertTrue(seating.size() >= 2);
     }
+
+    @Test
+    void generateSeating_seatsAllGuests() {
+        Venue venue = new Venue("Test Venue", 100, 20, 2, 5);
+        SeatingPlanner planner = new SeatingPlanner(venue);
+
+        List<Guest> guests = List.of(
+                new Guest("A", "family"),
+                new Guest("B", "family"),
+                new Guest("C", "family"),
+                new Guest("D", "family"),
+                new Guest("E", "family"),
+                new Guest("F", "family")
+        );
+
+        Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
+
+        int totalSeated = seating.values().stream()
+                .mapToInt(List::size)
+                .sum();
+
+        assertEquals(6, totalSeated);
+    }
+
+    @Test
+    void generateSeating_returnsEmptyMapForNoGuests() {
+        Venue venue = new Venue("Empty Venue", 100, 10, 2, 5);
+        SeatingPlanner planner = new SeatingPlanner(venue);
+
+        Map<Integer, List<Guest>> seating = planner.generateSeating(List.of());
+
+        assertTrue(seating.isEmpty());
+    }
 }
