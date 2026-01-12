@@ -11,23 +11,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SeatingPlannerTest {
 
+    // Helper to create guests quickly
+    private Guest guest(String id, String name, String group) {
+        return new Guest(id, name, group);
+    }
+
     @Test
     void generateSeating_groupsGuestsByGroupTag() {
         Venue venue = new Venue("Test Venue", 100.0, 50, 10, 5);
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("Alice", "family"),
-                new Guest("Bob", "family"),
-                new Guest("Carol", "friends")
+                guest("1", "Alice", "family"),
+                guest("2", "Bob", "family"),
+                guest("3", "Carol", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
 
         assertFalse(seating.isEmpty());
 
-        int totalSeated = seating.values()
-                .stream()
+        int totalSeated = seating.values().stream()
                 .mapToInt(List::size)
                 .sum();
 
@@ -40,19 +44,20 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("G1", "friends"),
-                new Guest("G2", "friends"),
-                new Guest("G3", "friends"),
-                new Guest("G4", "friends"),
-                new Guest("G5", "friends"),
-                new Guest("G6", "friends"),
-                new Guest("G7", "friends"),
-                new Guest("G8", "friends"),
-                new Guest("G9", "friends")
+                guest("1", "G1", "friends"),
+                guest("2", "G2", "friends"),
+                guest("3", "G3", "friends"),
+                guest("4", "G4", "friends"),
+                guest("5", "G5", "friends"),
+                guest("6", "G6", "friends"),
+                guest("7", "G7", "friends"),
+                guest("8", "G8", "friends"),
+                guest("9", "G9", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
 
+        // Should spread across at least 2 tables
         assertTrue(seating.size() >= 2);
     }
 
@@ -62,12 +67,12 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "family"),
-                new Guest("C", "family"),
-                new Guest("D", "family"),
-                new Guest("E", "family"),
-                new Guest("F", "family")
+                guest("1", "A", "family"),
+                guest("2", "B", "family"),
+                guest("3", "C", "family"),
+                guest("4", "D", "family"),
+                guest("5", "E", "family"),
+                guest("6", "F", "family")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -95,8 +100,8 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "friends")
+                guest("1", "A", "family"),
+                guest("2", "B", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -111,10 +116,10 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "friends"),
-                new Guest("C", "family"),
-                new Guest("D", "friends")
+                guest("1", "A", "family"),
+                guest("2", "B", "friends"),
+                guest("3", "C", "family"),
+                guest("4", "D", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -125,5 +130,4 @@ public class SeatingPlannerTest {
 
         assertEquals(4, totalSeated);
     }
-
 }
