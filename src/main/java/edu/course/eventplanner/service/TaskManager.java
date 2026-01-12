@@ -1,11 +1,13 @@
 package edu.course.eventplanner.service;
 
 import edu.course.eventplanner.model.Task;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Stack;
 
 public class TaskManager {
 
-    private final Queue<Task> upcoming = new LinkedList<>();
+    // Use LinkedList explicitly so we can addFirst
+    private final LinkedList<Task> upcoming = new LinkedList<>();
     private final Stack<Task> completed = new Stack<>();
 
     public void addTask(Task task) {
@@ -26,7 +28,9 @@ public class TaskManager {
         if (completed.isEmpty()) {
             return null;
         }
-        return completed.pop();
+        Task task = completed.pop();
+        upcoming.addFirst(task); // <- key fix: puts task back at the front
+        return task;
     }
 
     public int remainingTaskCount() {

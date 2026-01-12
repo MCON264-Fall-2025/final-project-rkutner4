@@ -28,31 +28,30 @@ public class TaskManagerTest {
     }
 
     @Test
-    void undoLastTask_returnsLastCompletedTask() {
+    void undoLastTask_returnsLastCompletedTask_andRestoresItToQueue() {
         TaskManager manager = new TaskManager();
         Task task = new Task("Prepare food");
 
         manager.addTask(task);
         manager.executeNextTask();
 
+        // Undo the last task
         Task undone = manager.undoLastTask();
         assertEquals(task, undone);
+
+        // Now it should be back in the upcoming queue
+        assertEquals(1, manager.remainingTaskCount());
+
+        // Executing again should give the same task
+        Task executedAgain = manager.executeNextTask();
+        assertEquals(task, executedAgain);
+        assertEquals(0, manager.remainingTaskCount());
     }
 
     @Test
     void undoLastTask_whenNoneExecuted_returnsNull() {
         TaskManager manager = new TaskManager();
-
         assertNull(manager.undoLastTask());
-    }
-
-    @Test
-    void undoLastTask_returnsNullWhenNothingCompleted() {
-        TaskManager manager = new TaskManager();
-
-        Task undone = manager.undoLastTask();
-
-        assertNull(undone);
     }
 
     @Test
@@ -69,10 +68,7 @@ public class TaskManagerTest {
     @Test
     void executeNextTask_returnsNullWhenNoTasksExist() {
         TaskManager manager = new TaskManager();
-
-        Task task = manager.executeNextTask();
-
-        assertNull(task);
+        assertNull(manager.executeNextTask());
     }
 
     @Test
@@ -84,7 +80,10 @@ public class TaskManagerTest {
         manager.executeNextTask();
 
         Task undone = manager.undoLastTask();
-
         assertEquals(task, undone);
+
+        // Verify it goes back to the queue
+        Task next = manager.executeNextTask();
+        assertEquals(task, next);
     }
 }
