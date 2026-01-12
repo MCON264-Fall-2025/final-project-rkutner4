@@ -1,39 +1,29 @@
 package edu.course.eventplanner.service;
 
 import edu.course.eventplanner.model.Venue;
-import java.util.*;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
 public class VenueSelector {
 
-    private final List<Venue> venues;
+    private final NavigableSet<Venue> sortedVenues;
 
     public VenueSelector(List<Venue> venues) {
-        this.venues = venues;
+        // Sort by cost ascending, then capacity ascending
+        sortedVenues = new TreeSet<>(Comparator
+                .comparingDouble(Venue::getCost)
+                .thenComparingInt(Venue::getCapacity)
+        );
+        sortedVenues.addAll(venues);
     }
 
     public Venue selectVenue(double budget, int guestCount) {
-        List<Venue> validVenues = new ArrayList<>();
-
-        // Filter venues by budget and capacity
-        for (Venue venue : venues) {
-            if (venue.getCost() <= budget && venue.getCapacity() >= guestCount) {
-                validVenues.add(venue);
-            }
-        }
-
-        if (validVenues.isEmpty()) {
-            return null;
-        }
-
-        // Sort by lowest cost, then smallest sufficient capacity
-        validVenues.sort((v1, v2) -> {
-            int costCompare = Double.compare(v1.getCost(), v2.getCost());
-            if (costCompare != 0) {
-                return costCompare;
-            }
-            return Integer.compare(v1.getCapacity(), v2.getCapacity());
-        });
-
-        return validVenues.get(0);
+        return sortedVenues.stream()
+                .filter(v -> v.getCost() <= budget && v.getCapacity() >= guestCount)
+                .findFirst()
+                .orElse(null);
     }
 }

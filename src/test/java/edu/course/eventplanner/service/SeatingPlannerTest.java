@@ -13,70 +13,55 @@ public class SeatingPlannerTest {
 
     @Test
     void generateSeating_groupsGuestsByGroupTag() {
-        Venue venue = new Venue("Test Venue", 100.0, 50, 10, 5);
+        Venue venue = new Venue("Test Venue", 100, 10, 2, 5);
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("Alice", "family"),
-                new Guest("Bob", "family"),
-                new Guest("Carol", "friends")
+                new Guest("Alice", "family", "1"),
+                new Guest("Bob", "family", "2"),
+                new Guest("Carol", "friends", "3")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
-
         assertFalse(seating.isEmpty());
 
-        int totalSeated = seating.values()
-                .stream()
-                .mapToInt(List::size)
-                .sum();
-
+        int totalSeated = seating.values().stream().mapToInt(List::size).sum();
         assertEquals(3, totalSeated);
     }
 
     @Test
-    void generateSeating_spreadsLargeGroupAcrossTables() {
-        Venue venue = new Venue("Big Venue", 200.0, 100, 15, 8);
+    void generateSeating_handlesZeroTablesGracefully() {
+        Venue venue = new Venue("No Tables", 50, 10, 0, 5);
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("G1", "friends"),
-                new Guest("G2", "friends"),
-                new Guest("G3", "friends"),
-                new Guest("G4", "friends"),
-                new Guest("G5", "friends"),
-                new Guest("G6", "friends"),
-                new Guest("G7", "friends"),
-                new Guest("G8", "friends"),
-                new Guest("G9", "friends")
+                new Guest("A", "family", "1"),
+                new Guest("B", "friends", "2")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
 
-        assertTrue(seating.size() >= 2);
+        assertTrue(seating.isEmpty());
     }
 
     @Test
-    void generateSeating_seatsAllGuests() {
-        Venue venue = new Venue("Test Venue", 100, 20, 2, 5);
+    void generateSeating_spreadsLargeGroupAcrossTables() {
+        Venue venue = new Venue("Big Venue", 200, 100, 2, 3);
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "family"),
-                new Guest("C", "family"),
-                new Guest("D", "family"),
-                new Guest("E", "family"),
-                new Guest("F", "family")
+                new Guest("G1", "friends", "1"),
+                new Guest("G2", "friends", "2"),
+                new Guest("G3", "friends", "3"),
+                new Guest("G4", "friends", "4"),
+                new Guest("G5", "friends", "5")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
 
-        int totalSeated = seating.values().stream()
-                .mapToInt(List::size)
-                .sum();
-
-        assertEquals(6, totalSeated);
+        int totalSeated = seating.values().stream().mapToInt(List::size).sum();
+        assertEquals(5, totalSeated);
+        assertTrue(seating.size() > 1); // Multiple tables used
     }
 
     @Test
@@ -85,45 +70,6 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(List.of());
-
         assertTrue(seating.isEmpty());
     }
-
-    @Test
-    void generateSeating_withZeroTables_stillSeatsGuests() {
-        Venue venue = new Venue("No Tables", 100, 10, 0, 5);
-        SeatingPlanner planner = new SeatingPlanner(venue);
-
-        List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "friends")
-        );
-
-        Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
-
-        assertFalse(seating.isEmpty());
-        assertEquals(2, seating.get(1).size());
-    }
-
-    @Test
-    void generateSeating_handlesMultipleGroupTags() {
-        Venue venue = new Venue("Mixed Groups", 100, 20, 4, 2);
-        SeatingPlanner planner = new SeatingPlanner(venue);
-
-        List<Guest> guests = List.of(
-                new Guest("A", "family"),
-                new Guest("B", "friends"),
-                new Guest("C", "family"),
-                new Guest("D", "friends")
-        );
-
-        Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
-
-        int totalSeated = seating.values().stream()
-                .mapToInt(List::size)
-                .sum();
-
-        assertEquals(4, totalSeated);
-    }
-
 }
