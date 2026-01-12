@@ -1,14 +1,8 @@
 package edu.course.eventplanner.service;
 
-import edu.course.eventplanner.model.Guest;
-import edu.course.eventplanner.model.Venue;
-
+import edu.course.eventplanner.model.*;
 import java.util.*;
 
-/**
- * Generates a seating chart for a venue.
- * Groups guests by groupTag and seats them sequentially across tables.
- */
 public class SeatingPlanner {
 
     private final Venue venue;
@@ -18,39 +12,37 @@ public class SeatingPlanner {
     }
 
     public Map<Integer, List<Guest>> generateSeating(List<Guest> guests) {
-        if (guests == null || guests.isEmpty() || venue.getTables() <= 0) {
-            return Map.of(); // Gracefully handle no guests or zero tables
-        }
-
-        // Group guests by groupTag using FIFO queues
+        // Group guests by groupTag using Map<String, Queue<Guest>>
         Map<String, Queue<Guest>> groupedGuests = new HashMap<>();
+
         for (Guest guest : guests) {
-            groupedGuests.computeIfAbsent(guest.getGroupTag(), k -> new LinkedList<>()).add(guest);
+            groupedGuests
+                    .computeIfAbsent(guest.getGroupTag(), k -> new LinkedList<>())
+                    .offer(guest);
         }
 
-        Map<Integer, List<Guest>> seating = new TreeMap<>();
-        int tableNum = 1;
-        int seatsPerTable = venue.getSeatsPerTable();
+        // TreeMap acts as a BST for ordered table numbers
+        Map<Integer, List<Guest>> seatingChart = new TreeMap<>();
 
-        // Fill tables sequentially
-        while (!groupedGuests.isEmpty()) {
-            List<Guest> table = new ArrayList<>();
-            Iterator<Map.Entry<String, Queue<Guest>>> it = groupedGuests.entrySet().iterator();
+        int tableNumber = 1;
+        final int TABLE_SIZE = 8;
 
-            while (it.hasNext() && table.size() < seatsPerTable) {
-                Map.Entry<String, Queue<Guest>> entry = it.next();
-                Queue<Guest> queue = entry.getValue();
+        // Seat each group fairly using queues
+        for (Queue<Guest> queue : groupedGuests.values()) {
+            while (!queue.isEmpty()) {
+                seatingChart.putIfAbsent(tableNumber, new ArrayList<>());
+                List<Guest> table = seatingChart.get(tableNumber);
 
-                while (!queue.isEmpty() && table.size() < seatsPerTable) {
+                while (table.size() < TABLE_SIZE && !queue.isEmpty()) {
                     table.add(queue.poll());
                 }
 
-                if (queue.isEmpty()) it.remove();
+                if (table.size() == TABLE_SIZE) {
+                    tableNumber++;
+                }
             }
-
-            seating.put(tableNum++, table);
         }
 
-        return seating;
+        return seatingChart;
     }
 }

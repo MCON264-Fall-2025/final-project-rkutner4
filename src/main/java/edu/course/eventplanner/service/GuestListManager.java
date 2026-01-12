@@ -1,34 +1,46 @@
 package edu.course.eventplanner.service;
 
 import edu.course.eventplanner.model.Guest;
-
 import java.util.*;
 
-/**
- * Manages the master guest list using guest name as the unique key.
- */
 public class GuestListManager {
 
-    private final Map<String, Guest> guestsByName = new HashMap<>();
+    private final LinkedList<Guest> guests = new LinkedList<>();
+    private final Map<String, Guest> guestByName = new HashMap<>();
 
     public void addGuest(Guest guest) {
-        if (guest == null) return;
-        guestsByName.put(guest.getName(), guest);
+        if (guest == null) {
+            return;
+        }
+
+        String name = guest.getName();
+        if (guestByName.containsKey(name)) {
+            return;
+        }
+
+        guests.add(guest);
+        guestByName.put(name, guest);
     }
 
     public boolean removeGuest(String guestName) {
-        return guestsByName.remove(guestName) != null;
+        Guest guest = guestByName.remove(guestName);
+        if (guest == null) {
+            return false;
+        }
+
+        guests.remove(guest);
+        return true;
     }
 
     public Guest findGuest(String guestName) {
-        return guestsByName.get(guestName);
+        return guestByName.get(guestName);
     }
 
     public int getGuestCount() {
-        return guestsByName.size();
+        return guests.size();
     }
 
     public List<Guest> getAllGuests() {
-        return new ArrayList<>(guestsByName.values());
+        return guests;
     }
 }
