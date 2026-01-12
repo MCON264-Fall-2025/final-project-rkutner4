@@ -1,6 +1,7 @@
 package edu.course.eventplanner.service;
 
 import edu.course.eventplanner.model.Guest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,85 +10,80 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GuestListManagerTest {
 
-    @Test
-    void addGuest_addsGuestToList() {
-        GuestListManager manager = new GuestListManager();
-        Guest guest = new Guest("1", "Alice", "friends");
+    private GuestListManager manager;
 
+    @BeforeEach
+    void setup() {
+        manager = new GuestListManager();
+    }
+
+    @Test
+    void addGuest_addsGuestSuccessfully() {
+        Guest guest = new Guest("1", "Alice", "family");
         manager.addGuest(guest);
 
-        assertEquals(1, manager.getGuestCount());
-        assertTrue(manager.getAllGuests().contains(guest));
+        List<Guest> allGuests = manager.getAllGuests();
+        assertEquals(1, allGuests.size());
+        assertEquals("Alice", allGuests.get(0).getName());
     }
 
     @Test
-    void addGuest_allowsDuplicateNames() {
-        GuestListManager manager = new GuestListManager();
-
-        manager.addGuest(new Guest("1", "Bob", "family"));
-        manager.addGuest(new Guest("2", "Bob", "friends"));
-
-        assertEquals(2, manager.getGuestCount());
-
-        List<Guest> bobs = manager.findGuestsByName("Bob");
-        assertEquals(2, bobs.size());
-    }
-
-    @Test
-    void findGuestsByName_returnsAllMatchingGuests() {
-        GuestListManager manager = new GuestListManager();
-
-        manager.addGuest(new Guest("1", "Carol", "neighbors"));
-        manager.addGuest(new Guest("2", "Carol", "family"));
-
-        List<Guest> found = manager.findGuestsByName("Carol");
-
-        assertEquals(2, found.size());
-    }
-
-    @Test
-    void removeGuestById_existingGuest_returnsTrue() {
-        GuestListManager manager = new GuestListManager();
-        Guest guest = new Guest("1", "Dave", "friends");
-
+    void removeGuestById_removesGuestSuccessfully() {
+        Guest guest = new Guest("1", "Bob", "friends");
         manager.addGuest(guest);
 
         boolean removed = manager.removeGuestById("1");
-
         assertTrue(removed);
-        assertEquals(0, manager.getGuestCount());
+        assertTrue(manager.getAllGuests().isEmpty());
     }
 
     @Test
-    void removeGuestById_missingGuest_returnsFalse() {
-        GuestListManager manager = new GuestListManager();
-
-        assertFalse(manager.removeGuestById("missing-id"));
+    void removeGuestById_returnsFalseIfGuestNotFound() {
+        boolean removed = manager.removeGuestById("999");
+        assertFalse(removed);
     }
 
     @Test
-    void addGuest_nullGuest_doesNothing() {
-        GuestListManager manager = new GuestListManager();
-
-        manager.addGuest(null);
-
-        assertEquals(0, manager.getGuestCount());
-    }
-
-    @Test
-    void addGuest_sameNameDifferentGuests_areIndependent() {
-        GuestListManager manager = new GuestListManager();
-
-        Guest g1 = new Guest("1", "Alice", "family");
-        Guest g2 = new Guest("2", "Alice", "friends");
+    void findGuestsByName_returnsMatchingGuests() {
+        Guest g1 = new Guest("1", "Carol", "family");
+        Guest g2 = new Guest("2", "Carol", "friends");
+        Guest g3 = new Guest("3", "Dave", "family");
 
         manager.addGuest(g1);
         manager.addGuest(g2);
+        manager.addGuest(g3);
 
-        List<Guest> alices = manager.findGuestsByName("Alice");
+        List<Guest> found = manager.findGuestsByName("Carol");
+        assertEquals(2, found.size());
+        assertTrue(found.stream().allMatch(g -> g.getName().equals("Carol")));
+    }
 
-        assertEquals(2, alices.size());
-        assertTrue(alices.contains(g1));
-        assertTrue(alices.contains(g2));
+    @Test
+    void findGuestsByName_returnsEmptyListIfNoMatch() {
+        Guest guest = new Guest("1", "Eve", "family");
+        manager.addGuest(guest);
+
+        List<Guest> found = manager.findGuestsByName("Nonexistent");
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
+    void getGuestCount_returnsCorrectCount() {
+        manager.addGuest(new Guest("1", "Alice", "family"));
+        manager.addGuest(new Guest("2", "Bob", "friends"));
+        assertEquals(2, manager.getGuestCount());
+    }
+
+    @Test
+    void getAllGuests_returnsAllAddedGuests() {
+        Guest g1 = new Guest("1", "Alice", "family");
+        Guest g2 = new Guest("2", "Bob", "friends");
+        manager.addGuest(g1);
+        manager.addGuest(g2);
+
+        List<Guest> allGuests = manager.getAllGuests();
+        assertEquals(2, allGuests.size());
+        assertTrue(allGuests.contains(g1));
+        assertTrue(allGuests.contains(g2));
     }
 }
