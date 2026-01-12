@@ -15,6 +15,11 @@ public class GuestListManagerTest {
         manager.addGuest(new Guest("Alice", "friends", "1"));
 
         assertEquals(1, manager.getGuestCount());
+        Guest added = manager.findGuest("Alice");
+        assertNotNull(added);
+        assertEquals("Alice", added.getName());
+        assertEquals("friends", added.getGroupTag());
+        assertEquals("1", added.getId());
     }
 
     @Test
@@ -35,10 +40,29 @@ public class GuestListManagerTest {
         manager.addGuest(g1);
         manager.addGuest(g2);
 
+        // List should have 1 guest
         assertEquals(1, manager.getGuestCount());
+
         // Lookup should return latest guest
-        assertEquals("friends", manager.findGuest("Alice").getGroupTag());
-        assertEquals("2", manager.findGuest("Alice").getId());
+        Guest latest = manager.findGuest("Alice");
+        assertNotNull(latest);
+        assertEquals("friends", latest.getGroupTag());
+        assertEquals("2", latest.getId());
+    }
+
+    @Test
+    void addGuest_multipleDifferentNames_addsAll() {
+        GuestListManager manager = new GuestListManager();
+
+        Guest g1 = new Guest("Alice", "family", "1");
+        Guest g2 = new Guest("Bob", "friends", "2");
+
+        manager.addGuest(g1);
+        manager.addGuest(g2);
+
+        assertEquals(2, manager.getGuestCount());
+        assertEquals("Alice", manager.findGuest("Alice").getName());
+        assertEquals("Bob", manager.findGuest("Bob").getName());
     }
 
     @Test
@@ -70,6 +94,7 @@ public class GuestListManagerTest {
         assertNotNull(found);
         assertEquals("Carol", found.getName());
         assertEquals("neighbors", found.getGroupTag());
+        assertEquals("1", found.getId());
     }
 
     @Test
@@ -84,5 +109,42 @@ public class GuestListManagerTest {
         // Modifying returned list should not affect original
         all.clear();
         assertEquals(1, manager.getGuestCount());
+    }
+
+    @Test
+    void addGuest_sameNameDifferentIds_allowsOverwrite() {
+        GuestListManager manager = new GuestListManager();
+
+        Guest g1 = new Guest("Eve", "family", "1");
+        Guest g2 = new Guest("Eve", "friends", "2");
+        Guest g3 = new Guest("Eve", "coworkers", "3");
+
+        manager.addGuest(g1);
+        manager.addGuest(g2);
+        manager.addGuest(g3);
+
+        // List should only have 1 guest (latest)
+        assertEquals(1, manager.getGuestCount());
+
+        Guest latest = manager.findGuest("Eve");
+        assertEquals("coworkers", latest.getGroupTag());
+        assertEquals("3", latest.getId());
+    }
+
+    @Test
+    void removeGuest_removesAllDuplicatesByName() {
+        GuestListManager manager = new GuestListManager();
+
+        Guest g1 = new Guest("Frank", "family", "1");
+        Guest g2 = new Guest("Frank", "friends", "2");
+
+        manager.addGuest(g1);
+        manager.addGuest(g2);
+
+        assertEquals(1, manager.getGuestCount()); // Only latest is kept
+        boolean removed = manager.removeGuest("Frank");
+        assertTrue(removed);
+        assertEquals(0, manager.getGuestCount());
+        assertNull(manager.findGuest("Frank"));
     }
 }

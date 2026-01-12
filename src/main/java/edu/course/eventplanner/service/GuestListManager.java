@@ -5,43 +5,30 @@ import edu.course.eventplanner.model.Guest;
 import java.util.*;
 
 /**
- * Manages the master guest list and fast lookup by name.
- * Uses:
- * - LinkedList to maintain order of guests
- * - HashMap for O(1) lookup by name
+ * Manages the master guest list using guest name as the unique key.
  */
 public class GuestListManager {
 
-    private final LinkedList<Guest> guests = new LinkedList<>();
-    private final Map<String, Guest> guestByName = new HashMap<>();
+    private final Map<String, Guest> guestsByName = new HashMap<>();
 
     public void addGuest(Guest guest) {
-        if (guest == null) return; // Null-safety
-
-        // If guest with same name exists, overwrite lookup but keep original list entry
-        if (!guestByName.containsKey(guest.getName())) {
-            guests.add(guest);
-        }
-        guestByName.put(guest.getName(), guest);
+        if (guest == null) return;
+        guestsByName.put(guest.getName(), guest);
     }
 
     public boolean removeGuest(String guestName) {
-        Guest guest = guestByName.remove(guestName);
-        if (guest == null) return false;
-
-        guests.remove(guest); // Remove from master list
-        return true;
+        return guestsByName.remove(guestName) != null;
     }
 
     public Guest findGuest(String guestName) {
-        return guestByName.get(guestName);
+        return guestsByName.get(guestName);
     }
 
     public int getGuestCount() {
-        return guests.size();
+        return guestsByName.size();
     }
 
     public List<Guest> getAllGuests() {
-        return new ArrayList<>(guests); // Return copy to prevent external modification
+        return new ArrayList<>(guestsByName.values());
     }
 }
