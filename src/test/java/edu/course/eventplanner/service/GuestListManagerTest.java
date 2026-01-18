@@ -19,11 +19,13 @@ public class GuestListManagerTest {
 
     @Test
     void addGuest_addsGuestSuccessfully_andIncreasesCount() {
-        Guest guest = new Guest("1", "Alice", "family");
-        assertEquals(0, manager.getGuestCount(), "Guest count should start at 0");
+        Guest guest = new Guest("Alice", "family");
+        assertEquals(0, manager.getGuestCount());
 
-        manager.addGuest(guest);
-        assertEquals(1, manager.getGuestCount(), "Guest count should increase to 1 after adding");
+        int id = manager.addGuest(guest);
+
+        assertEquals(1, manager.getGuestCount());
+        assertTrue(id > 0);
 
         List<Guest> allGuests = manager.getAllGuests();
         assertEquals(1, allGuests.size());
@@ -32,79 +34,74 @@ public class GuestListManagerTest {
 
     @Test
     void removeGuestById_removesGuestSuccessfully_andDecreasesCount() {
-        Guest guest = new Guest("1", "Bob", "friends");
-        manager.addGuest(guest);
-        assertEquals(1, manager.getGuestCount(), "Guest count should be 1 before removal");
+        Guest guest = new Guest("Bob", "friends");
+        int id = manager.addGuest(guest);
 
-        boolean removed = manager.removeGuestById("1");
+        assertEquals(1, manager.getGuestCount());
+
+        boolean removed = manager.removeGuestById(id);
         assertTrue(removed);
-        assertEquals(0, manager.getGuestCount(), "Guest count should decrease after removal");
+        assertEquals(0, manager.getGuestCount());
         assertTrue(manager.getAllGuests().isEmpty());
     }
 
     @Test
     void removeGuestById_returnsFalseIfGuestNotFound_andDoesNotChangeCount() {
-        assertEquals(0, manager.getGuestCount(), "Guest count should start at 0");
+        assertEquals(0, manager.getGuestCount());
 
-        boolean removed = manager.removeGuestById("999");
+        boolean removed = manager.removeGuestById(999);
         assertFalse(removed);
-        assertEquals(0, manager.getGuestCount(), "Guest count should remain 0 when removing nonexistent guest");
+        assertEquals(0, manager.getGuestCount());
     }
 
     @Test
     void findGuestsByName_returnsMatchingGuests_andDoesNotAffectCount() {
-        Guest g1 = new Guest("1", "Carol", "family");
-        Guest g2 = new Guest("2", "Carol", "friends");
-        Guest g3 = new Guest("3", "Dave", "family");
+        manager.addGuest(new Guest("Carol", "family"));
+        manager.addGuest(new Guest("Carol", "friends"));
+        manager.addGuest(new Guest("Dave", "family"));
 
-        manager.addGuest(g1);
-        manager.addGuest(g2);
-        manager.addGuest(g3);
-
-        assertEquals(3, manager.getGuestCount(), "Guest count should be 3 after adding");
+        assertEquals(3, manager.getGuestCount());
 
         List<Guest> found = manager.findGuestsByName("Carol");
         assertEquals(2, found.size());
         assertTrue(found.stream().allMatch(g -> g.getName().equals("Carol")));
 
-        // Ensure count remains correct
-        assertEquals(3, manager.getGuestCount(), "Guest count should remain unchanged after search");
+        assertEquals(3, manager.getGuestCount());
     }
 
     @Test
     void findGuestsByName_returnsEmptyListIfNoMatch_andCountRemainsCorrect() {
-        Guest guest = new Guest("1", "Eve", "family");
-        manager.addGuest(guest);
+        manager.addGuest(new Guest("Eve", "family"));
 
         List<Guest> found = manager.findGuestsByName("Nonexistent");
         assertTrue(found.isEmpty());
-        assertEquals(1, manager.getGuestCount(), "Guest count should remain unchanged when search yields no results");
+        assertEquals(1, manager.getGuestCount());
     }
 
     @Test
     void getGuestCount_returnsCorrectCount_afterMultipleAddsAndRemovals() {
+        int id1 = manager.addGuest(new Guest("Alice", "family"));
+        int id2 = manager.addGuest(new Guest("Bob", "friends"));
+
+        assertEquals(2, manager.getGuestCount());
+
+        manager.removeGuestById(id1);
+        assertEquals(1, manager.getGuestCount());
+
+        manager.removeGuestById(id2);
         assertEquals(0, manager.getGuestCount());
-
-        manager.addGuest(new Guest("1", "Alice", "family"));
-        manager.addGuest(new Guest("2", "Bob", "friends"));
-        assertEquals(2, manager.getGuestCount(), "Guest count should reflect two added guests");
-
-        manager.removeGuestById("1");
-        assertEquals(1, manager.getGuestCount(), "Guest count should reflect removal of one guest");
-
-        manager.removeGuestById("2");
-        assertEquals(0, manager.getGuestCount(), "Guest count should be 0 after removing all guests");
     }
 
     @Test
     void getAllGuests_returnsAllAddedGuests_andCountMatches() {
-        Guest g1 = new Guest("1", "Alice", "family");
-        Guest g2 = new Guest("2", "Bob", "friends");
+        Guest g1 = new Guest("Alice", "family");
+        Guest g2 = new Guest("Bob", "friends");
+
         manager.addGuest(g1);
         manager.addGuest(g2);
 
         List<Guest> allGuests = manager.getAllGuests();
-        assertEquals(manager.getGuestCount(), allGuests.size(), "All guests list size should match guest count");
+        assertEquals(manager.getGuestCount(), allGuests.size());
         assertTrue(allGuests.contains(g1));
         assertTrue(allGuests.contains(g2));
     }

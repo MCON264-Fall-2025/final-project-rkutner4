@@ -13,16 +13,15 @@ public class Generators {
         );
     }
 
-    public static List<Guest> GenerateGuests(int n) {
+    public static List<Guest> generateGuests(int n) { // method name lowercase g
         List<Guest> guests = new ArrayList<>();
         String[] groups = {"family", "friends", "neighbors", "coworkers"};
 
         for (int i = 1; i <= n; i++) {
-            String id = String.valueOf(i);
             String name = "Guest" + i;
             String group = groups[i % groups.length];
 
-            guests.add(new Guest(id, name, group));
+            guests.add(new Guest(name, group));
         }
 
         return guests;

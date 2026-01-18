@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SeatingPlannerTest {
 
-    // Helper to create guests quickly
-    private Guest guest(String id, String name, String group) {
-        return new Guest(id, name, group);
+    // Helper to create guests quickly (no ID needed)
+    private Guest guest(String name, String group) {
+        return new Guest(name, group);
     }
 
     @Test
@@ -22,9 +22,9 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                guest("1", "Alice", "family"),
-                guest("2", "Bob", "family"),
-                guest("3", "Carol", "friends")
+                guest("Alice", "family"),
+                guest("Bob", "family"),
+                guest("Carol", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -44,15 +44,15 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                guest("1", "G1", "friends"),
-                guest("2", "G2", "friends"),
-                guest("3", "G3", "friends"),
-                guest("4", "G4", "friends"),
-                guest("5", "G5", "friends"),
-                guest("6", "G6", "friends"),
-                guest("7", "G7", "friends"),
-                guest("8", "G8", "friends"),
-                guest("9", "G9", "friends")
+                guest("G1", "friends"),
+                guest("G2", "friends"),
+                guest("G3", "friends"),
+                guest("G4", "friends"),
+                guest("G5", "friends"),
+                guest("G6", "friends"),
+                guest("G7", "friends"),
+                guest("G8", "friends"),
+                guest("G9", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -67,12 +67,12 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                guest("1", "A", "family"),
-                guest("2", "B", "family"),
-                guest("3", "C", "family"),
-                guest("4", "D", "family"),
-                guest("5", "E", "family"),
-                guest("6", "F", "family")
+                guest("A", "family"),
+                guest("B", "family"),
+                guest("C", "family"),
+                guest("D", "family"),
+                guest("E", "family"),
+                guest("F", "family")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -100,8 +100,8 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                guest("1", "A", "family"),
-                guest("2", "B", "friends")
+                guest("A", "family"),
+                guest("B", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
@@ -116,10 +116,10 @@ public class SeatingPlannerTest {
         SeatingPlanner planner = new SeatingPlanner(venue);
 
         List<Guest> guests = List.of(
-                guest("1", "A", "family"),
-                guest("2", "B", "friends"),
-                guest("3", "C", "family"),
-                guest("4", "D", "friends")
+                guest("A", "family"),
+                guest("B", "friends"),
+                guest("C", "family"),
+                guest("D", "friends")
         );
 
         Map<Integer, List<Guest>> seating = planner.generateSeating(guests);
