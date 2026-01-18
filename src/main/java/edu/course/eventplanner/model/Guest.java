@@ -1,14 +1,14 @@
 package edu.course.eventplanner.model;
 
 public class Guest {
+    private static int nextId = 1;
+
     private final String id;
     private final String name;
     private final String groupTag;
 
     public Guest(String name, String groupTag) {
-        this.id = null;
-        this.name = name;
-        this.groupTag = groupTag;
+        this(String.valueOf(nextId++), name, groupTag); // generate ID and delegate
     }
 
     public Guest(String id, String name, String groupTag) {

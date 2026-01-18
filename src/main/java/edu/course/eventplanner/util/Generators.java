@@ -20,9 +20,9 @@ public class Generators {
         for (int i = 1; i <= n; i++) {
             String id = String.valueOf(i);
             String name = "Guest" + i;
-            String group = groups[i % groups.length];
+            String groupTag = groups[i % groups.length];
 
-            guests.add(new Guest(id, name, group));
+            guests.add(new Guest(id, name, groupTag));
         }
 
         return guests;
